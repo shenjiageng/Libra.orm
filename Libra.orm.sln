@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libra.orm", "Libra.orm\Libra.orm.csproj", "{7378041F-80C8-4E66-B035-69CC6A6CE67A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libra.orm.test", "Libra.orm.test\Libra.orm.test.csproj", "{195264A9-40A9-4C3E-B630-2E111C98A307}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7378041F-80C8-4E66-B035-69CC6A6CE67A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7378041F-80C8-4E66-B035-69CC6A6CE67A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7378041F-80C8-4E66-B035-69CC6A6CE67A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7378041F-80C8-4E66-B035-69CC6A6CE67A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{195264A9-40A9-4C3E-B630-2E111C98A307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{195264A9-40A9-4C3E-B630-2E111C98A307}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{195264A9-40A9-4C3E-B630-2E111C98A307}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{195264A9-40A9-4C3E-B630-2E111C98A307}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C21015E2-239F-4F8D-945F-A25311D6B70B}
+	EndGlobalSection
+EndGlobal
