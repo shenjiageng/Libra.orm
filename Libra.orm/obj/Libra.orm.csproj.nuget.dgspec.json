@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Administrator\\Desktop\\Libra.orm\\Libra.orm.csproj": {}
+    "E:\\Libra.orm\\Libra.orm\\Libra.orm.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Administrator\\Desktop\\Libra.orm\\Libra.orm.csproj": {
+    "E:\\Libra.orm\\Libra.orm\\Libra.orm.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\Libra.orm\\Libra.orm.csproj",
+        "projectUniqueName": "E:\\Libra.orm\\Libra.orm\\Libra.orm.csproj",
         "projectName": "Libra.orm",
-        "projectPath": "C:\\Users\\Administrator\\Desktop\\Libra.orm\\Libra.orm.csproj",
+        "projectPath": "E:\\Libra.orm\\Libra.orm\\Libra.orm.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Administrator\\Desktop\\Libra.orm\\obj\\",
+        "outputPath": "E:\\Libra.orm\\Libra.orm\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

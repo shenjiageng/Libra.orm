@@ -907,11 +907,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\Libra.orm.test\\Libra.orm.test.csproj",
+      "projectUniqueName": "E:\\Libra.orm\\Libra.orm.test\\Libra.orm.test.csproj",
       "projectName": "Libra.orm.test",
-      "projectPath": "C:\\Users\\Administrator\\Desktop\\Libra.orm.test\\Libra.orm.test.csproj",
+      "projectPath": "E:\\Libra.orm\\Libra.orm.test\\Libra.orm.test.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Administrator\\Desktop\\Libra.orm.test\\obj\\",
+      "outputPath": "E:\\Libra.orm\\Libra.orm.test\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -935,8 +935,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\Administrator\\Desktop\\Libra.orm\\Libra.orm.csproj": {
-              "projectPath": "C:\\Users\\Administrator\\Desktop\\Libra.orm\\Libra.orm.csproj"
+            "E:\\Libra.orm\\Libra.orm\\Libra.orm.csproj": {
+              "projectPath": "E:\\Libra.orm\\Libra.orm\\Libra.orm.csproj"
             }
           }
         }

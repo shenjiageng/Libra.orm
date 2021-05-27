@@ -1,5 +1,5 @@
-﻿using Libra.orm.DbFilter;
-using Libra.orm.DbMapping;
+﻿using Libra.orm.LibraAttributes.DbFilter;
+using Libra.orm.LibraAttributes.DbMapping;
 using Libra.orm.DbModel;
 using Libra.orm.LibraBase;
 using System;
@@ -23,8 +23,8 @@ namespace Libra.orm.DbCache
             Type type = typeof(T);
             // 反射初始化SQL语句
             {
-                string columnsString = string.Join(',', type.FilterPropertyWithNoKey().Select(prop => $"[{prop.GetMappingName()}]"));
-                string valuesString = string.Join(',', type.FilterPropertyWithNoKey().Select(prop => $"@{prop.GetMappingName()}"));
+                string columnsString = string.Join(',', type.FilterPropertyWithNoKey().FilterPropertyWithNoMapped().Select(prop => $"[{prop.GetMappingName()}]"));
+                string valuesString = string.Join(',', type.FilterPropertyWithNoKey().FilterPropertyWithNoMapped().Select(prop => $"@{prop.GetMappingName()}"));
                 string insertSql = $"insert into {type.GetMappingName()} ({columnsString}) values ({valuesString})";
                 SqlCache.Add(LibraSqlCacheBuilderType.Insert, insertSql);
             }
@@ -33,7 +33,7 @@ namespace Libra.orm.DbCache
                 SqlCache.Add(LibraSqlCacheBuilderType.Delete, deleteSql);
             }
             {
-                string expressionString = string.Join(',', type.FilterPropertyWithNoKey().Select(prop => $"[{prop.GetMappingName()}] = @{prop.GetMappingName()}"));
+                string expressionString = string.Join(',', type.FilterPropertyWithNoKey().FilterPropertyWithNoMapped().Select(prop => $"[{prop.GetMappingName()}] = @{prop.GetMappingName()}"));
                 string updateSql = $"update {type.GetMappingName()} set {expressionString}";
                 SqlCache.Add(LibraSqlCacheBuilderType.Update, updateSql);
             }

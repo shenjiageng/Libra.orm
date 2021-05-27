@@ -1,4 +1,4 @@
-﻿using Libra.orm.DbMapping;
+﻿using Libra.orm.LibraAttributes.DbMapping;
 using Libra.orm.DbModel;
 using Libra.orm.LibraBase;
 using System;

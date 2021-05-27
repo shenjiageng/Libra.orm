@@ -11,7 +11,9 @@ namespace Libra.orm
 {
     public interface ILibraContent
     {
-        public IEnumerable<T> Query<T>(Expression<Func<T, bool>> expression, bool realtime = false) where T : LibraBaseModel, new();
+        public IEnumerable<T> Query<T>(Expression<Func<T, bool>> expression) where T : LibraBaseModel, new();
+
+        public IEnumerable<T> QueryRealtime<T>(Expression<Func<T, bool>> expression) where T : LibraBaseModel, new();
 
         public IEnumerable<dynamic> Query(string sql, params Expression<Func<string, object>>[] expressions);
 

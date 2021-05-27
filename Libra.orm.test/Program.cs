@@ -13,48 +13,35 @@ namespace Libra.orm.test
     {
         static void Main(string[] args)
         {
-            // 常规创建
+            string connectionString = "Data Source=192.168.66.18;Initial Catalog=hwj_test;User ID=sa;Password=sql@123;Min Pool Size=10;";
+
             LibraContent content = new LibraContent(new LibraConfigure
             {
-                WriteConnection = new LibraConnectionStringModel { ConnectionString = "Data Source=.;Initial Catalog=DIP_BASE;User ID=sa;Password=123456;" }
+                WriteConnection = new LibraConnectionStringModel { ConnectionString = connectionString }
             });
-            // 依赖注入
-            /*services.AddLibraDistributed(new LibraConfigure
-            {
-                WriteConnection = new LibraConnectionStringModel { ConnectionString = "Data Source=.;Initial Catalog=ZQ_SYSTEM_LOG;User ID=sa;Password=zq@418" }
-            });*/
-            // 执行查询
-
             Stopwatch watch = new Stopwatch();
-            watch.Restart();
-            var result = content.Query("select * from SYS_USER_INFO (nolock) where Username like @username ", username => "%demo%");
-            watch.Stop();
-            Console.WriteLine($"dynamic耗时：{watch.Elapsed.TotalMilliseconds} ms");
-
-            foreach (var item in result)
+            double dynamicSumTime = 0;
+            double tableSumTime = 0;
+            for (int i = 1; i <= 10; i++)
             {
-                Console.WriteLine(item.jwh);
-            }
+                watch.Restart();
+                var result = content.Query("select * from dbo.hwsp (nolock) where hwshl > 0 ");
+                watch.Stop();
+                Console.WriteLine($"第{i}次 dynamic耗时：{watch.Elapsed.TotalMilliseconds} ms");
 
-            /*watch.Restart();
-            // 结果处理
-            foreach (var item in result)
-            {
-                // 整行访问
-                foreach (KeyValuePair<string, object> kv in item)
-                {
-                    Console.Write($"  {kv.Key}:{kv.Value}  ");
-                }
-                Console.WriteLine();
-            }
-            watch.Stop();*/
+                dynamicSumTime += watch.Elapsed.TotalMilliseconds;
 
-            watch.Restart();
-            DbHandler_Function dbContent = new DbHandler_Function("Data Source=.;Initial Catalog=DIP_BASE;User ID=sa;Password=123456");
-            DataTable table = dbContent.AdtExecuteDataTable("select * from SYS_USER_INFO (nolock) where Username like @username ",
-                new System.Data.SqlClient.SqlParameter("@username", "%demo%"));
-            watch.Stop();
-            Console.WriteLine($"table耗时：{watch.Elapsed.TotalMilliseconds} ms");
+                watch.Restart();
+                DbHandler_Function dbContent = new DbHandler_Function(connectionString);
+                DataTable table = dbContent.AdtExecuteDataTable("select * from dbo.hwsp (nolock) where hwshl > 0 ");
+                watch.Stop();
+                Console.WriteLine($"第{i}次 table耗时：{watch.Elapsed.TotalMilliseconds} ms");
+
+                tableSumTime += watch.Elapsed.TotalMilliseconds;
+            }
+            Console.WriteLine($"dynamic总耗时:{dynamicSumTime},平均 {dynamicSumTime / 10}");
+            Console.WriteLine($"table总耗时:{tableSumTime},平均 {tableSumTime / 10}");
+            Console.WriteLine(dynamicSumTime > tableSumTime ? "框架性能低":"");
             Console.ReadKey();
         }
     }
