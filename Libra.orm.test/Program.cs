@@ -13,7 +13,7 @@ namespace Libra.orm.test
     {
         static void Main(string[] args)
         {
-            string connectionString = "Data Source=192.168.66.18;Initial Catalog=hwj_test;User ID=sa;Password=sql@123;Min Pool Size=10;";
+            string connectionString = "Data Source=*.*.*.*;Initial Catalog=***;User ID=sa;Password=***;";
 
             LibraContent content = new LibraContent(new LibraConfigure
             {
