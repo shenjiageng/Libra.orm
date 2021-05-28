@@ -26,6 +26,8 @@ namespace Libra.orm
             // 初始化注入配置文件
             LibraConnectionStringPool.Configure = configure;
             LibraConnectionStringPool.PoolInitialization();
+            // 根据model自动生成表 如后续配置读写库的,也会自动生成表
+            LibraInitialization.InitDatabaseTable();
         }
 
         /// <summary>

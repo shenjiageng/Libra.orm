@@ -27,5 +27,10 @@ namespace Libra.orm.LibraBase
         public LibraStrategyReaderEnum Strategy { get; set; }
 
         public LibraConfigure Value => this;
+
+        /// <summary>
+        /// 当前可执行程序的目录
+        /// </summary>
+        public string AssemblyDirectory { get; set; }
     }
 }

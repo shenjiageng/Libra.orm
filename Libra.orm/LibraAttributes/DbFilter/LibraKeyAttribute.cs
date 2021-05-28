@@ -11,5 +11,6 @@ namespace Libra.orm.LibraAttributes.DbFilter
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class LibraKeyAttribute:Attribute
-    { }
+    {
+    }
 }

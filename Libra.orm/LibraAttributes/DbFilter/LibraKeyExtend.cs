@@ -20,6 +20,16 @@ namespace Libra.orm.LibraAttributes.DbFilter
         }
 
         /// <summary>
+        /// 获取类中标记LibraKey的属性
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static PropertyInfo FilterPropertyWithKey(this Type type)
+        {
+            return type.GetProperties().Where(p => p.IsDefined(typeof(LibraKeyAttribute), true)).Single();
+        }
+
+        /// <summary>
         /// 过滤标记LibraKey的属性 
         /// </summary>
         /// <param name="propertys"></param>
@@ -34,7 +44,7 @@ namespace Libra.orm.LibraAttributes.DbFilter
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static IEnumerable<PropertyInfo> FilterPropertyWithNoMapped(this Type type) 
+        public static IEnumerable<PropertyInfo> FilterPropertyWithNoMapped(this Type type)
         {
             return type.GetProperties().Where(p => !p.IsDefined(typeof(LibraNotMappedAttribute), true));
         }

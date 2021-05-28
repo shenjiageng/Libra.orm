@@ -17,7 +17,8 @@ namespace Libra.orm.test
 
             LibraContent content = new LibraContent(new LibraConfigure
             {
-                WriteConnection = new LibraConnectionStringModel { ConnectionString = connectionString }
+                WriteConnection = new LibraConnectionStringModel { ConnectionString = connectionString },
+                AssemblyDirectory = AppDomain.CurrentDomain.BaseDirectory
             });
             Stopwatch watch = new Stopwatch();
             double dynamicSumTime = 0;
