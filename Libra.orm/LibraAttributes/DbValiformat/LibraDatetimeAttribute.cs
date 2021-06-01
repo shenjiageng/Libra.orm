@@ -9,7 +9,8 @@ namespace Libra.orm.LibraAttributes.DbValiformat
     {
         public override object ValueFormat(object oValue)
         {
-            return DateTime.Parse(oValue.ToString()).ToString("yyyy-MM-dd HH:mm:ss");
+            if (oValue == null) return null;
+            return DateTime.Parse(DateTime.Parse(oValue.ToString()).ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         public override string GetSqlType()

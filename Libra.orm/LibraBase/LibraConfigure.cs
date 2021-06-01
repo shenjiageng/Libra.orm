@@ -29,8 +29,8 @@ namespace Libra.orm.LibraBase
         public LibraConfigure Value => this;
 
         /// <summary>
-        /// 当前可执行程序的目录
+        /// 当前执行程序的目录
         /// </summary>
-        public string AssemblyDirectory { get; set; }
+        public string[] AssemblyDirectory { get; set; }
     }
 }

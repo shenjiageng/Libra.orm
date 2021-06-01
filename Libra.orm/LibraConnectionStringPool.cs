@@ -10,26 +10,25 @@ using System.Threading.Tasks;
 
 namespace Libra.orm
 {
-    public class LibraConnectionStringPool
+    internal class LibraConnectionStringPool
     {
-        private static LibraConnectionStringModel WriteConnection;
-        private static List<LibraConnectionStringModel> ReadConnections;
-
-        public static LibraConfigure Configure { get; set; }
+        internal static LibraConnectionStringModel WriteConnection;
+        internal static List<LibraConnectionStringModel> ReadConnections;
+        internal static LibraStrategyReaderEnum Strategy;
 
         /// <summary>
         /// 初始化连接字符串
         /// </summary>
-        public static void PoolInitialization()
+        internal static void PoolInitialization(LibraConnectionStringModel writeConnection, LibraStrategyReaderEnum strategy, LibraConnectionStringModel[] readConnections)
         {
-            if (Configure.WriteConnection == null) throw new ArgumentNullException(nameof(Configure.WriteConnection));
-            WriteConnection = Configure.WriteConnection;
+            WriteConnection = writeConnection ?? throw new ArgumentNullException(nameof(writeConnection));
             ReadConnections = new List<LibraConnectionStringModel>();
-            if (Configure.ReadConnections != null)
+            if (readConnections != null)
             {
-                if (Configure.Strategy == LibraStrategyReaderEnum.Weighing)
+                Strategy = strategy;
+                if (Strategy == LibraStrategyReaderEnum.Weighing)
                 {
-                    foreach (var item in Configure.ReadConnections)
+                    foreach (var item in readConnections)
                     {
                         for (int i = 0; i < item.WeighingNumber; i++)
                         {
@@ -39,13 +38,13 @@ namespace Libra.orm
                 }
                 else
                 {
-                    ReadConnections = Configure.ReadConnections.ToList();
+                    ReadConnections = readConnections.ToList();
                 }
             }
         }
 
 
-        public static LibraConnectionStringModel GetConnection(LibraDbBehaviorEnum behavior, bool realtime = false)
+        internal static LibraConnectionStringModel GetConnection(LibraDbBehaviorEnum behavior, bool realtime = false)
         {
             return behavior switch
             {
@@ -62,7 +61,7 @@ namespace Libra.orm
             // 未配置读写分离，则自动返回主库.
             // 或者需要实时查询，则返回主库
             if (ReadConnections == null || ReadConnections.Count == 0 || realtime) return WriteConnection;
-            switch (Configure.Strategy)
+            switch (Strategy)
             {
                 case LibraStrategyReaderEnum.RoundRobin:
                     {

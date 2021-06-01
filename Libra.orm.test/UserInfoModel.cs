@@ -2,13 +2,14 @@
 using Libra.orm.LibraAttributes.DbMapping;
 using Libra.orm.LibraAttributes.DbValidata;
 using Libra.orm.LibraAttributes.DbValiformat;
+using Libra.orm.LibraBase;
 using System;
 
 namespace Libra.orm.test
 {
     [Serializable]
     [LibraTable("SYS_USER_INFO")]
-    public class UserInfoModel
+    public class UserInfoModel: LibraBaseModel
     {
         [LibraKey]
         public int ID { get; set; }
@@ -80,7 +81,7 @@ namespace Libra.orm.test
         public bool NowOnLine { get; set; } = false;
 
         [LibraDatetime]
-        public DateTime LastOffline { get; set; }
+        public DateTime? LastOffline { get; set; }
 
         /// <summary>
         /// 是否已被注销
@@ -92,6 +93,6 @@ namespace Libra.orm.test
         /// 注销时间
         /// </summary>
         [LibraDatetime]
-        public DateTime CancellationTime { get; set; }
+        public DateTime? CancellationTime { get; set; }
     }
 }

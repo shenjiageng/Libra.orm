@@ -7,6 +7,7 @@ C:\Users\Administrator\Desktop\Libra.orm\obj\Debug\netcoreapp3.1\Libra.orm.dll
 C:\Users\Administrator\Desktop\Libra.orm\obj\Debug\netcoreapp3.1\Libra.orm.csprojAssemblyReference.cache
 E:\Libra.ORM\Libra.orm\bin\Debug\netcoreapp3.1\Libra.orm.deps.json
 E:\Libra.ORM\Libra.orm\bin\Debug\netcoreapp3.1\Libra.orm.dll
+E:\Libra.ORM\Libra.orm\obj\Debug\netcoreapp3.1\Libra.orm.csprojAssemblyReference.cache
 E:\Libra.ORM\Libra.orm\obj\Debug\netcoreapp3.1\Libra.orm.AssemblyInfoInputs.cache
 E:\Libra.ORM\Libra.orm\obj\Debug\netcoreapp3.1\Libra.orm.AssemblyInfo.cs
 E:\Libra.ORM\Libra.orm\obj\Debug\netcoreapp3.1\Libra.orm.csproj.CoreCompileInputs.cache

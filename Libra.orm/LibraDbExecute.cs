@@ -86,7 +86,7 @@ namespace Libra.orm
                 T t = new T();
                 foreach (var prop in propertys)
                 {
-                    prop.SetValue(t, reader[prop.GetMappingName()]);
+                    prop.SetValue(t, reader[prop.GetMappingName()] == DBNull.Value? null: reader[prop.GetMappingName()]);
                 }
                 listModels.Add(t);
             }

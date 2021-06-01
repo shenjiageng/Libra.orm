@@ -16,18 +16,19 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Libra.orm.LibraAttributes.DbValiformat;
+using Microsoft.Extensions.Options;
 
 namespace Libra.orm
 {
     public class LibraContent : ILibraContent
     {
-        public LibraContent(LibraConfigure configure)
+        public LibraContent(IOptions<LibraConfigure> configure)
         {
-            // 初始化注入配置文件
-            LibraConnectionStringPool.Configure = configure;
-            LibraConnectionStringPool.PoolInitialization();
+            // 初始化配置
+            LibraConnectionStringPool.PoolInitialization(configure.Value.WriteConnection, configure.Value.Strategy, configure.Value.ReadConnections);
             // 根据model自动生成表 如后续配置读写库的,也会自动生成表
-            LibraInitialization.InitDatabaseTable();
+            var init = new LibraInitialization(configure.Value);
+            init.InitDatabaseTable();
         }
 
         /// <summary>
@@ -39,10 +40,18 @@ namespace Libra.orm
         public IEnumerable<T> QueryRealtime<T>(Expression<Func<T, bool>> expression) where T : LibraBaseModel, new()
         {
             string sql = LibraSqlCacheBuilder<T>.GetSqlString(LibraSqlCacheBuilderType.Query);
-            ExpressionToSql visit = new ExpressionToSql();
-            visit.Visit(expression);
-            string wheres = visit.GetSqlWhere();
-            if (!string.IsNullOrWhiteSpace(wheres)) sql += $" where {wheres}";
+            var result = new ExpressionAnalyzer(expression).ResultData;
+            if (result.TableList.Count > 1) throw new Exception("表达式错误.多个对象.");
+            if (result.TableList.Count == 1) sql += $" as {result.TableList.First().Key} (nolock)";
+            if (result.TableList.Count == 0) sql += " (nolock) ";
+            if (result.StackList.Count > 0) sql += $"where {string.Join(" ", result.StackList)}";
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            if (result.ParamList.Count > 0)
+            {
+                foreach (var item in result.ParamList)
+                    parameters.Add(new SqlParameter(item.Key, item.Value));
+            }
+            Console.WriteLine(sql);
             return LibraDbExecute.Execute<IEnumerable<T>>(sql, LibraDbBehaviorEnum.Read, command =>
             {
                 return command.ExecuteReader(CommandBehavior.CloseConnection).ReaderToList<T>();
@@ -58,14 +67,22 @@ namespace Libra.orm
         public IEnumerable<T> Query<T>(Expression<Func<T, bool>> expression) where T : LibraBaseModel, new()
         {
             string sql = LibraSqlCacheBuilder<T>.GetSqlString(LibraSqlCacheBuilderType.Query);
-            ExpressionToSql visit = new ExpressionToSql();
-            visit.Visit(expression);
-            string wheres = visit.GetSqlWhere();
-            if (!string.IsNullOrWhiteSpace(wheres)) sql += $" where {wheres}";
-            yield return (T)LibraDbExecute.Execute<IEnumerable<T>>(sql, LibraDbBehaviorEnum.Read, command =>
+            var result = new ExpressionAnalyzer(expression).ResultData;
+            if (result.TableList.Count > 1) throw new Exception("表达式错误.多个对象.");
+            if (result.TableList.Count == 1) sql += $" as {result.TableList.First().Key} (nolock)";
+            if (result.TableList.Count == 0) sql += " (nolock) ";
+            if (result.StackList.Count > 0) sql += $"where {string.Join(" ", result.StackList)}";
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            if (result.ParamList.Count > 0)
+            {
+                foreach (var item in result.ParamList)
+                    parameters.Add(new SqlParameter(item.Key, item.Value));
+            }
+            Console.WriteLine(sql);
+            return LibraDbExecute.Execute<IEnumerable<T>>(sql, LibraDbBehaviorEnum.Read, command =>
             {
                 return command.ExecuteReader(CommandBehavior.CloseConnection).ReaderToList<T>();
-            }, false).ValueFormat();
+            }, false, parameters.ToArray()).ValueFormat();
         }
 
         /// <summary>
@@ -133,15 +150,20 @@ namespace Libra.orm
         {
             Type type = typeof(T);
             string sql = LibraSqlCacheBuilder<T>.GetSqlString(LibraSqlCacheBuilderType.Delete);
-            ExpressionToSql visit = new ExpressionToSql();
-            visit.Visit(expression);
-            string wheres = visit.GetSqlWhere();
-            if (!string.IsNullOrWhiteSpace(wheres))
-                sql += $" where {wheres}";
+            var result = new ExpressionAnalyzer(expression).ResultData;
+            if (result.StackList.Count > 0) sql += $" where {string.Join(" ", result.StackList)}";
+            sql = sql.Replace(result.TableList.Count > 0 ? $"[{result.TableList.First().Key}]." : "", "");
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            if (result.ParamList.Count > 0)
+            {
+                foreach (var item in result.ParamList)
+                    parameters.Add(new SqlParameter(item.Key, item.Value));
+            }
+            Console.WriteLine(sql);
             return LibraDbExecute.Execute(sql, LibraDbBehaviorEnum.Write, command =>
             {
                 return command.ExecuteNonQuery() != 0;
-            });
+            }, parameters.ToArray());
         }
 
         /// <summary>
@@ -157,16 +179,21 @@ namespace Libra.orm
             t.ValueFormat(); // 属性值格式化
             Type type = typeof(T);
             string sql = LibraSqlCacheBuilder<T>.GetSqlString(LibraSqlCacheBuilderType.Update);
-            ExpressionToSql visit = new ExpressionToSql();
-            visit.Visit(expression);
-            string wheres = visit.GetSqlWhere();
-            if (!string.IsNullOrWhiteSpace(wheres))
-                sql += $" where {wheres}";
-            SqlParameter[] parameters = type.FilterPropertyWithNoKey().FilterPropertyWithNoMapped().Select(prop => new SqlParameter($"@{prop.GetMappingName()}", prop.GetValue(t) ?? DBNull.Value)).ToArray();
+            var result = new ExpressionAnalyzer(expression).ResultData;
+            if (result.StackList.Count > 0) sql += $" where {string.Join(" ", result.StackList)}";
+            sql = sql.Replace(result.TableList.Count > 0 ? $"[{result.TableList.First().Key}]." : "", "");
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            if (result.ParamList.Count > 0)
+            {
+                foreach (var item in result.ParamList)
+                    parameters.Add(new SqlParameter(item.Key, item.Value));
+            }
+            Console.WriteLine(sql);
+            parameters.AddRange(type.FilterPropertyWithNoKey().FilterPropertyWithNoMapped().Select(prop => new SqlParameter($"@{prop.GetMappingName()}", prop.GetValue(t) ?? DBNull.Value)).ToArray());
             return LibraDbExecute.Execute(sql, LibraDbBehaviorEnum.Write, command =>
             {
                 return command.ExecuteNonQuery() != 0;
-            }, parameters);
+            }, parameters.ToArray());
         }
     }
 }

@@ -6,20 +6,27 @@ using Libra.orm.LibraAttributes.DbMapping;
 using System.Linq;
 using Libra.orm.LibraBase;
 using Libra.orm.LibraAttributes.DbFilter;
-using System.IO;
 using System.Data;
+using System.IO;
 using Libra.orm.LibraAttributes.DbValiformat;
 using Libra.orm.LibraAttributes.DbValidata;
 using System.Data.SqlClient;
 
 namespace Libra.orm
 {
-    internal static class LibraInitialization
+    internal class LibraInitialization
     {
+        readonly LibraConfigure _Configure;
+
+        public LibraInitialization(LibraConfigure configure)
+        {
+            this._Configure = configure;
+        }
+
         /// <summary>
         /// 模型model初始化成表
         /// </summary>
-        internal static void InitDatabaseTable()
+        internal void InitDatabaseTable()
         {
             // 获取所有dll中标记 LibraTableAttribute 的类
             Type[] types = SearchTable();
@@ -53,13 +60,12 @@ namespace Libra.orm
             InitExecute(waitExecute);
         }
 
-        private static Type[] SearchTable()
+        private Type[] SearchTable()
         {
             List<Type> types = new List<Type>();
-            string directory = LibraConnectionStringPool.Configure.AssemblyDirectory;
-            if (string.IsNullOrWhiteSpace(directory)) throw new Exception("请配置model程序集目录.");
-            string[] files = Directory.GetFiles(directory, "*.dll");
-            foreach (var filePath in files)
+            string[] directory = this._Configure.AssemblyDirectory;
+            if (directory.Length == 0) throw new Exception("请配置数据库模型model所在程序集.");
+            foreach (var filePath in directory)
             {
                 // 通过反射加载所有标记 LibraTableAttribute 的类
                 Assembly asm = Assembly.LoadFrom(filePath);
@@ -73,7 +79,7 @@ namespace Libra.orm
             return types.ToArray();
         }
 
-        private static bool IsTableAttribute(Attribute[] o)
+        private bool IsTableAttribute(Attribute[] o)
         {
             foreach (Attribute a in o)
             {
@@ -83,13 +89,13 @@ namespace Libra.orm
             return false;
         }
 
-        private static void InitExecute(List<string> waitExecuteSql)
+        private void InitExecute(List<string> waitExecuteSql)
         {
             // 获取所有的数据库链接
             List<string> connections = new List<string>();
-            connections.Add(LibraConnectionStringPool.Configure.WriteConnection.ConnectionString);
-            if (LibraConnectionStringPool.Configure.ReadConnections != null)
-                connections.AddRange(LibraConnectionStringPool.Configure.ReadConnections.Select(rc => rc.ConnectionString).ToArray());
+            connections.Add(this._Configure.WriteConnection.ConnectionString);
+            if (this._Configure.ReadConnections != null)
+                connections.AddRange(this._Configure.ReadConnections.Select(rc => rc.ConnectionString).ToArray());
             foreach (var connString in connections)
             {
                 foreach (var sql in waitExecuteSql)
@@ -101,66 +107,6 @@ namespace Libra.orm
                     conn.Close();
                 }
             }
-        }
-
-        private static SqlDbType TypeToDbType(this Type t)
-        {
-            return Type.GetTypeCode(t) switch
-            {
-                TypeCode.Boolean => SqlDbType.Bit,
-                TypeCode.Byte => SqlDbType.TinyInt,
-                TypeCode.DateTime => SqlDbType.DateTime,
-                TypeCode.Decimal => SqlDbType.Decimal,
-                TypeCode.Double => SqlDbType.Float,
-                TypeCode.Int16 => SqlDbType.SmallInt,
-                TypeCode.Int32 => SqlDbType.Int,
-                TypeCode.Int64 => SqlDbType.BigInt,
-                TypeCode.SByte => SqlDbType.TinyInt,
-                TypeCode.Single => SqlDbType.Real,
-                TypeCode.String => SqlDbType.NVarChar,
-                TypeCode.UInt16 => SqlDbType.SmallInt,
-                TypeCode.UInt32 => SqlDbType.Int,
-                TypeCode.UInt64 => SqlDbType.BigInt,
-                TypeCode.Char => SqlDbType.Char,
-                _ => t == typeof(byte[]) ? SqlDbType.Binary : SqlDbType.Variant,
-            };
-        }
-
-        private static string ToTSqlText(this SqlDbType type)
-        {
-            return type switch
-            {
-                SqlDbType.BigInt => "long",
-                SqlDbType.Binary => "binary",
-                SqlDbType.Bit => "bit",
-                SqlDbType.Char => "char",
-                SqlDbType.DateTime => "datetime",
-                SqlDbType.Decimal => "numeric",
-                SqlDbType.Float => "float",
-                SqlDbType.Image => "image",
-                SqlDbType.Int => "int",
-                SqlDbType.Money => "money",
-                SqlDbType.NChar => "nchar(max)",
-                SqlDbType.NText => "ntext",
-                SqlDbType.NVarChar => "nvarchar(max)",
-                SqlDbType.Real => "real",
-                SqlDbType.UniqueIdentifier => "uniqueIdentifier",
-                SqlDbType.SmallDateTime => "smalldatetime",
-                SqlDbType.SmallInt => "smallint",
-                SqlDbType.SmallMoney => "smallmoney",
-                SqlDbType.Text => "text",
-                SqlDbType.Timestamp => "timestamp",
-                SqlDbType.TinyInt => "tinyint",
-                SqlDbType.VarBinary => "varbinary",
-                SqlDbType.VarChar => "varchar",
-                SqlDbType.Variant => "sql_variant",
-                SqlDbType.Xml => "xml",
-                SqlDbType.Date => "date",
-                SqlDbType.Time => "time",
-                SqlDbType.DateTime2 => "datetime2",
-                SqlDbType.DateTimeOffset => "datetimeoffset",
-                _ => "",
-            };
         }
     }
 }
